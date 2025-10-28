@@ -23,6 +23,8 @@ const registerUser = asyncHandler(async(req,res)=>{
 
     console.log("Checking required files for testing",req.files)
 
+    
+
 
 
     
