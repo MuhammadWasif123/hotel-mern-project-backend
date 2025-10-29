@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, {Schema} from "mongoose";
 import bcrypt from "bcrypt"
 
 
@@ -27,7 +27,7 @@ const userSchema= new Schema(
             default:""
         },
         verifyOtpExpireAt:{
-            type:number,
+            type:Number,
             default:0
         },
         isAccountVerified:{
@@ -39,7 +39,7 @@ const userSchema= new Schema(
             default:""
         },
         resetOtpExpireAt:{
-            type:number,
+            type:Number,
             default:0
         },
         role:{

@@ -1,12 +1,14 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { ApiError } from "../utils/ApiError.js";
 
 
 const registerUser = asyncHandler(async(req,res)=>{
-    const {username,email,password } = req.body
+    const {userName,email,password } = req.body
 
     if(
-        [username,email,password].some((field)=>
+        [userName,email,password].some((field)=>
             field?.trim() === ""
         )
     ){
@@ -14,7 +16,7 @@ const registerUser = asyncHandler(async(req,res)=>{
     }
 
     const existedUser = await User.findOne({
-        $or:[{username},{email}]
+        $or:[{userName},{email}]
     })
 
     if(existedUser){
@@ -23,14 +25,34 @@ const registerUser = asyncHandler(async(req,res)=>{
 
     console.log("Checking required files for testing",req.files)
 
-    
+    const avatarLocalPath = req.files?.avatar[0]?.path;
+
+    if(!avatarLocalPath){
+        throw new ApiError(400,"Avatar file is required")
+    }
+
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+    console.log(`Response from cloudinary ${avatar.url}`)
+
+    if(!avatar){
+        throw new ApiError(400,"Avatar file is required")
+    }
+
+    const user = await User.create({
+        userName: userName.toLowerCase(),
+        email,
+        password,
+        avatar: avatar.url
+    })
+    console.log(`This is the response from the  user object we are saving in the database ${user}`)
 
 
+    const createdUser = await User.findById(user._id).select(
+        "-password -refreshToken"
+    )
 
     
 })
-
-
 
 
 
