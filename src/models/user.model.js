@@ -46,6 +46,9 @@ const userSchema= new Schema(
             type:String,
             enum:["user","owner","admin"],
             default:"user"
+        },
+        refreshToken:{
+            type:String
         }
     },
     {
